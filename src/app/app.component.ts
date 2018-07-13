@@ -6,6 +6,7 @@ import { Config, Nav, Platform } from 'ionic-angular';
 
 import { FirstRunPage } from '../pages';
 import { Settings } from '../providers';
+import { Camera, CameraOptions } from '@ionic-native/camera';
 
 @Component({
   template: `<ion-menu [content]="content">
@@ -45,12 +46,49 @@ export class MyApp {
     { title: 'Search', component: 'SearchPage' }
   ]
 
-  constructor(private translate: TranslateService, platform: Platform, settings: Settings, private config: Config, private statusBar: StatusBar, private splashScreen: SplashScreen) {
+  constructor(private translate: TranslateService, platform: Platform, settings: Settings, private config: Config, private statusBar: StatusBar, private splashScreen: SplashScreen,private camera: Camera) {
     platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
       this.statusBar.styleDefault();
       this.splashScreen.hide();
+      
+      function setOptions(srcType) {
+        var options = {
+              // Some common settings are 20, 50, and 100
+              quality: 50,
+              destinationType: Camera.DestinationType.FILE_URI,
+              // In this app, dynamically set the picture source, Camera or photo gallery
+              sourceType: srcType,
+              encodingType: Camera.EncodingType.JPEG,
+              mediaType: Camera.MediaType.PICTURE,
+              allowEdit: true,
+              correctOrientation: true  //Corrects Android orientation quirks
+          }
+          return options;
+      } 
+      function openCamera(selection) {
+
+          var srcType = Camera.PictureSourceType.CAMERA;
+          var options = setOptions(srcType);
+          var func = createNewFileEntry;
+      
+          navigator.camera.getPicture(function cameraSuccess(imageUri) {
+      
+              displayImage(imageUri);
+              // You may choose to copy the picture, save it somewhere, or upload.
+              func(imageUri);
+      
+          }, function cameraError(error) {
+              console.debug("Unable to obtain picture: " + error, "app");
+      
+          }, options);
+      }
+      function displayImage(imgUri) {
+
+          var elem = document.getElementById('imageFile');
+          elem.src = imgUri;
+      }
     });
     this.initTranslate();
   }
@@ -86,4 +124,5 @@ export class MyApp {
     // we wouldn't want the back button to show in this scenario
     this.nav.setRoot(page.component);
   }
+  
 }

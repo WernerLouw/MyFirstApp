@@ -6,7 +6,9 @@
       {{ 'WELCOME_INTRO' | translate }}
     </div>
   </div>
-  <div padding> test
+  <div padding> 
+    <div id="imageFile"></div>
+    <button ion-button block (click)="openCamera()">openCamera</button>
     <button ion-button block (click)="signup()">{{ 'SIGNUP' | translate }}</button>
     <button ion-button block (click)="login()" class="login">{{ 'LOGIN' | translate }}</button>
   </div>
